@@ -52,7 +52,7 @@ testMode = False
 if testMode:
     print(generateReport(getWeatherData()))
 else:
-    sched = "9:55"
+    sched = "09:55"
     schedule.every().day.at(sched).do(sendMessage)
     print(f"Message scheduled for {sched}!")
 

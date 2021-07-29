@@ -11,6 +11,8 @@ TWILIO_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 client = Client(TWILIO_SID, TWILIO_TOKEN)
 
+testMode = False
+
 def getWeatherData():
     g = geocoder.ip('me')
     lat, lon = g.latlng
@@ -18,7 +20,7 @@ def getWeatherData():
 
     data = requests.get(f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={WEATHERTOKEN}&units=metric")
     datajson = data.json()
-    # datastr = json.dumps(data.json(), indent=4)
+    # should rly refactor into a class lol
     dict = {
         "date": datetime.fromtimestamp(datajson["daily"][0]["dt"]).strftime("%A, %B %d, %Y"),
         "sunrise": datetime.fromtimestamp(datajson["daily"][0]["sunrise"]).strftime("%I:%M %p").lstrip("0"),
@@ -27,7 +29,7 @@ def getWeatherData():
         "max": round(datajson["daily"][0]["temp"]["max"], 1),
         "min": round(datajson["daily"][0]["temp"]["min"], 1),
 
-        "pop": int(datajson["daily"][0]["pop"])
+        "pop": int(float(datajson["daily"][0]["pop"])*100)
     }
     return dict
 
@@ -46,8 +48,6 @@ def sendMessage():
         to=TONUMBER
     )
     return True
-
-testMode = False
 
 if testMode:
     print(generateReport(getWeatherData()))
